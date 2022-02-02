@@ -71,12 +71,11 @@ const app = createApp({
 
            }
         },
-        //新增與編輯產品資料(共用相同modal)
-          updateProducts(){
+        updateProducts(){
             let updateUrl = `${this.apiUrl}/api/${this.apiPath}/admin/product`;
             let requestMethod = 'post';
             //如果是編輯商品資料 api網址和請求方法會更改
-            if( this.AddNewProduct === false){
+            if( this.isNew === false){
                 updateUrl = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.temp.id}`;
                 requestMethod = 'put';
             }
@@ -85,14 +84,15 @@ const app = createApp({
                 //顯示已建立產品
                 alert(res.data.message);
                 //重新取得新的資料並渲染到畫面上
-                this.getProductsList();
+                 this.getProductsList();
                 //關閉modal
                 productModal.hide();
             })
             .catch((err)=>{
                 alert(err.data.message);
           })
-      },
+    },
+     
       //刪除產品
       deleteProduct(){
         axios.delete(`${this.apiUrl}/api/${this.apiPath}/admin/product/${this.temp.id}`)
@@ -129,6 +129,13 @@ const app = createApp({
 
 
     }
+})
+
+//全域註冊元件
+app.component('product-modal',{
+    props:['temp'],
+    template:'#productModalTemplate',
+    
 })
 
 app.mount('#app');
