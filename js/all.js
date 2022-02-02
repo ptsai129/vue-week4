@@ -13,7 +13,7 @@ const app = createApp({
        }
      }, 
      methods:{
-         signIn(){
+        signIn(){
              const signInUrl = `${this.apiUrl}/admin/signin`;
              axios.post(signInUrl , this.user)
              .then((res)=>{
