@@ -1,9 +1,17 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.esm-browser.min.js';
+//匯入元件
+import pagination from '/js/pagination.js'
+
 let productModal ={};
 let delProductModal ={};
 
 
 const app = createApp({
+    //區域註冊
+    components:{
+        pagination
+
+    },
     data(){
         return{
             apiUrl :'https://vue3-course-api.hexschool.io/v2', //api的網址
@@ -12,7 +20,8 @@ const app = createApp({
             isNew :false, //編輯or新增產品modal標題判斷用
             temp:{
                 imagesUrl:[]
-            }
+            },
+            pagination:{}
         }
     }, 
     methods:{
@@ -27,11 +36,12 @@ const app = createApp({
                 window.location = 'index.html';
             })
         },
-        //取得產品列表
-        getProductsList(){
-            const getProductsUrl = `${this.apiUrl}/api/${this.apiPath}/admin/products/all`;
+        //取得產品列表  //參數預設值
+        getProductsList(page = 1 ){
+            const getProductsUrl = `${this.apiUrl}/api/${this.apiPath}/admin/products/?page=${page}`;
             axios.get(getProductsUrl).then((res)=>{
                 this.products = res.data.products; 
+                this.pagination = res.data.pagination;
             })
         }, 
         //開啟modal

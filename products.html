@@ -64,6 +64,8 @@
             </tr>
           </tbody>
         </table>
+        <!-- 頁數元件 前內後外  -->
+        <pagination :pages="pagination" @get-productlist="getProductsList"></pagination>
       </div>
       <!-- Modal -->
       <div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel"
