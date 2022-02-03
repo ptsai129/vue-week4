@@ -7,8 +7,8 @@ let delProductModal ={};
 
 
 const app = createApp({
-    //區域註冊
-    components:{
+    //區域註冊 頁碼元件
+    components:{  
         pagination
 
     },
@@ -118,24 +118,87 @@ const app = createApp({
             axios.defaults.headers.common['Authorization'] = token;
             //檢查是否已登入
             this.checkSignIn();
-            // 使用 new 建立 bootstrap Modal，拿到實體 DOM 並賦予到變數上
-            productModal = new bootstrap.Modal(document.getElementById('productModal'),{
-                keyboard:false//取消使用esc關閉modal功能
-            })
-            delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'), {
-                keyboard: false
-            });
-          
-
-
     }
 })
 
-//全域註冊元件
+//全域註冊元件 新增編輯產品modal
 app.component('product-modal',{
-    props:['temp'],
+    props:['temp', 'isNew'],
     template:'#productModalTemplate',
+    data(){
+        return{
+            apiUrl :'https://vue3-course-api.hexschool.io/v2', //api的網址
+            apiPath : 'ptsai129', //個人 API Path
+        }
+    },
+    methods:{
+        updateProducts(){
+            let updateUrl = `${this.apiUrl}/api/${this.apiPath}/admin/product`;
+            let requestMethod = 'post';
+            //如果是編輯商品資料 api網址和請求方法會更改
+            if( this.isNew === false){
+                updateUrl = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.temp.id}`;
+                requestMethod = 'put';
+            }
+            axios[requestMethod](updateUrl , {data: this.temp})
+            .then((res)=>{
+                //顯示已建立產品
+                alert(res.data.message);
+                //重新取得新的資料並渲染到畫面上
+                this.$emit('update');
+                //關閉modal
+                productModal.hide();
+            })
+            .catch((err)=>{
+                alert(err.data.message);
+          })
+    },
+     
+       
+
+    },
+    mounted(){
+        productModal = new bootstrap.Modal(document.getElementById('productModal'),{
+            keyboard:false//取消使用esc關閉modal功能
+        })
+
+    }
     
+})
+
+//全域註冊元件 新增編輯產品modal
+app.component('delete-modal',{
+ props:['item'],
+ template:'#deleteProductTemplate',
+ data(){
+    return{
+        apiUrl :'https://vue3-course-api.hexschool.io/v2', //api的網址
+        apiPath : 'ptsai129', //個人 API Path
+    }
+},
+
+methods:{
+
+    deleteProduct(){
+        axios.delete(`${this.apiUrl}/api/${this.apiPath}/admin/product/${this.item.id}`)
+        .then((res)=>{
+            alert(res.data.message);
+            delProductModal.hide();
+            this.$emit('update');
+        }).catch((err)=>{
+            alert(err.data.message);
+        })
+
+    }
+
+},
+mounted(){
+    delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'), {
+        keyboard: false
+    });
+}
+
+
 })
 
 app.mount('#app');
