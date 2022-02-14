@@ -59,7 +59,13 @@ const app = createApp({
 
            }else if(type ==='edit'){
             //如果判斷是編輯產品 
-            this.temp = {...product};
+           
+            this.temp = JSON.parse(JSON.stringify(product)); //改成深拷貝避免多圖新增、修改、刪除會傳參考修改到 product.imagesUrl
+            //讓新增圖片按鈕可以被渲染
+            if( !this.temp.imagesUrl){
+                this.temp.imagesUrl=[]
+              }
+           
             //modal標題顯示編輯產品
             this.isNew = false; 
             productModal.show();
@@ -71,45 +77,6 @@ const app = createApp({
 
            }
         },
-        updateProducts(){
-            let updateUrl = `${this.apiUrl}/api/${this.apiPath}/admin/product`;
-            let requestMethod = 'post';
-            //如果是編輯商品資料 api網址和請求方法會更改
-            if( this.isNew === false){
-                updateUrl = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.temp.id}`;
-                requestMethod = 'put';
-            }
-            axios[requestMethod](updateUrl , {data: this.temp})
-            .then((res)=>{
-                //顯示已建立產品
-                alert(res.data.message);
-                //重新取得新的資料並渲染到畫面上
-                 this.getProductsList();
-                //關閉modal
-                productModal.hide();
-            })
-            .catch((err)=>{
-                alert(err.data.message);
-          })
-    },
-     
-      //刪除產品
-      deleteProduct(){
-        axios.delete(`${this.apiUrl}/api/${this.apiPath}/admin/product/${this.temp.id}`)
-        .then((res)=>{
-            alert(res.data.message);
-            delProductModal.hide();
-            this.getProductsList();
-        }).catch((err)=>{
-            alert(err.data.message);
-        })
-
-    }
-
-
-
-
-
     },
 
     mounted(){
@@ -123,7 +90,7 @@ const app = createApp({
 
 //全域註冊元件 新增編輯產品modal
 app.component('product-modal',{
-    props:['temp', 'isNew'],
+    props:['temp', 'isNew','currentPage'],
     template:'#productModalTemplate',
     data(){
         return{
@@ -145,7 +112,7 @@ app.component('product-modal',{
                 //顯示已建立產品
                 alert(res.data.message);
                 //重新取得新的資料並渲染到畫面上
-                this.$emit('update');
+                this.$emit('update', requestMethod ==='put' ? this.currentPage:1 );// 如果是 put 請求就把 this.currentPage 傳入  getProductsList
                 //關閉modal
                 productModal.hide();
             })

@@ -71,7 +71,7 @@
       <div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel"
            aria-hidden="true">
       <!-- 新增&編輯產品元件 -->
-      <product-modal :temp="temp"  :is-new="isNew" @update="getProductsList"></product-modal>
+      <product-modal :temp="temp"  :is-new="isNew" @update="getProductsList"  :current-page="pagination.current_page"></product-modal>
       </div>
       <!--刪除Modal -->
       <div id="delProductModal" ref="delProductModal" class="modal fade" tabindex="-1"
